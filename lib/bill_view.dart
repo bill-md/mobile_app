@@ -1,7 +1,9 @@
 import 'package:bill_md_mobile/add_bill_view.dart';
+import 'package:bill_md_mobile/bm_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:bill_md_mobile/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BillView extends StatefulWidget {
   @override
@@ -9,6 +11,15 @@ class BillView extends StatefulWidget {
 }
 
 class _BillViewState extends State<BillView> {
+  List<DocumentSnapshot> userAccounts;
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchUserAccounts();
+  }
+
   void tappedAddBill(_) {
     Navigator.push(
       context,
@@ -18,8 +29,46 @@ class _BillViewState extends State<BillView> {
     );
   }
 
+  void fetchUserAccounts() {
+    Firestore.instance
+        .collection(FirebaseCollections.user_accounts)
+        .getDocuments()
+        .then(
+          (documents) =>
+              setState(() => this.userAccounts = documents.documents),
+        )
+        .catchError(print);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userCards = userAccounts
+        ?.map((d) => CustomCard(
+              title: d['title'],
+              description: d['description'],
+            ))
+        ?.toList();
+
+    final Widget cards = userAccounts == null
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Loading..'),
+                CircularProgressIndicator(),
+              ],
+            ),
+          )
+        : Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  children: userCards,
+                ),
+              ),
+            ],
+          );
+
     return Column(
       children: [
         Container(
@@ -66,26 +115,29 @@ class _BillViewState extends State<BillView> {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-          child: Text(
-            'It seems you don\'t have any bills,\nadd one?',
-            textAlign: TextAlign.center,
-          ),
-        ),
-        GestureDetector(
-          onTapUp: tappedAddBill,
-          child: Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, color: BMColors.alert_orange),
-            child: Icon(
-              Icons.add,
-              size: 32,
-              color: Colors.white,
+        if (userCards == []) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+            child: Text(
+              'It seems you don\'t have any bills,\nadd one?',
+              textAlign: TextAlign.center,
             ),
           ),
-        ),
+          GestureDetector(
+            onTapUp: tappedAddBill,
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: BMColors.alert_orange),
+              child: Icon(
+                Icons.add,
+                size: 32,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+        Expanded(child: cards),
       ],
     );
   }

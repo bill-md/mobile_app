@@ -18,6 +18,10 @@ class BMColors {
   static final background_grey = Color(0xFFF3F3F3);
 }
 
+class FirebaseCollections {
+  static const user_accounts = 'useraccounts'; 
+}
+
 class UIAssets {
   static final boxShadow = [
     BoxShadow(
