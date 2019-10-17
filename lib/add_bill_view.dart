@@ -40,13 +40,13 @@ class _AddBillViewState extends State<AddBillView> {
             decoration: BoxDecoration(
                 border: Border(
                     bottom:
-                        BorderSide(color: BMColors.light_grey, width: 0.5))),
+                        BorderSide(color: BMColors.lightGrey, width: 0.5))),
             child: CupertinoTextField(
               decoration: BoxDecoration(border: null),
               controller: m['controller'],
               placeholder: m['placeholder'],
               placeholderStyle: TextStyle(
-                  color: BMColors.light_grey,
+                  color: BMColors.lightGrey,
                   fontWeight: FontWeight.w300,
                   fontSize: 15),
             ),
@@ -56,7 +56,7 @@ class _AddBillViewState extends State<AddBillView> {
     return BMNavigatorView(
       title: 'Add Bill',
       child: Container(
-        color: BMColors.background_grey,
+        color: BMColors.backgroundGrey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -75,7 +75,7 @@ class _AddBillViewState extends State<AddBillView> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border(
-                  top: BorderSide(color: BMColors.light_grey, width: 0.5),
+                  top: BorderSide(color: BMColors.lightGrey, width: 0.5),
                 ),
               ),
               child: Column(
@@ -100,7 +100,7 @@ class _AddBillViewState extends State<AddBillView> {
               margin: EdgeInsets.all(24),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: BMColors.alert_orange,
+                color: BMColors.alertOrange,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Text(

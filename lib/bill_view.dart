@@ -148,7 +148,7 @@ class _BillViewState extends State<BillView> {
             child: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: BMColors.alert_orange),
+                  shape: BoxShape.circle, color: BMColors.alertOrange),
               child: Icon(
                 Icons.add,
                 size: 32,

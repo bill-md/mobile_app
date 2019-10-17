@@ -43,7 +43,7 @@ class BMNavigatorView extends StatelessWidget {
                         width: 36,
                         child: Icon(
                           Icons.arrow_back_ios,
-                          color: BMColors.dark_grey,
+                          color: BMColors.darkGrey,
                         ),
                       ),
                     ),

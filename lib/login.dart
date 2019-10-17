@@ -46,7 +46,7 @@ class _LogInViewState extends State<LogInView> {
               onTapUp: tappedLogIn,
               child: Container(
                 decoration: BoxDecoration(
-                  color: BMColors.actionable_blue,
+                  color: BMColors.actionableBlue,
                   borderRadius: BorderRadius.circular(7),
                 ),
                 margin: EdgeInsets.only(top: 24),

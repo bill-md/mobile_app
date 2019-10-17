@@ -50,7 +50,7 @@ class _BillMDAppState extends State<BillMDApp> {
         accentColor: Color(0xFFFF1744),
         textTheme: TextTheme(
           body1: TextStyle(
-            color: BMColors.dark_grey,
+            color: BMColors.darkGrey,
             fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
