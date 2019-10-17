@@ -39,7 +39,10 @@ class _BillViewState extends State<BillView> {
           (documents) =>
               setState(() => this.userAccounts = documents.documents),
         )
-        //Notice we are passing the print function as the param so that it just goes straight to the console.
+        //Notice we are passing the print function as the param so that it just goes straight to the console. 
+        // During development, this is helpful for seeing errors. In the future, we will want to use 
+        // a package like (shameless plug for my package :) ) https://pub.dev/packages/dropdown_banner 
+        // to inform the user of a failure
         .catchError(print);
     //We could've also done:
     // .catchError((e) => print(e));
