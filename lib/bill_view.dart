@@ -30,26 +30,28 @@ class _BillViewState extends State<BillView> {
   }
 
   void fetchUserAccounts() {
+    // We use futures here because of their readability, and simplicity in parsing errors.
     Firestore.instance
         .collection(FirebaseCollections.user_accounts)
         .getDocuments()
+        // On completion, update UI
         .then(
           (documents) =>
               setState(() => this.userAccounts = documents.documents),
         )
+        //Notice we are passing the print function as the param so that it just goes straight to the console.
         .catchError(print);
+    //We could've also done:
+    // .catchError((e) => print(e));
   }
 
   @override
   Widget build(BuildContext context) {
-    final userCards = userAccounts
-        ?.map((d) => CustomCard(
-              title: d['title'],
-              description: d['description'],
-            ))
-        ?.toList();
-
-    final Widget cards = userAccounts == null
+    // TODO Sandeep: look how we handle the case where we are still waiting for Firestore to load vs when it finishes
+    // Determine our user body now to make further down more readable for now.
+    // We can put this within the body later if we wanted.
+    final Widget contentCards = userAccounts == null
+        // Waiting on Firestore to load
         ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -59,11 +61,17 @@ class _BillViewState extends State<BillView> {
               ],
             ),
           )
+        //Show what we have
         : Column(
             children: <Widget>[
               Expanded(
                 child: ListView(
-                  children: userCards,
+                  children: userAccounts
+                      .map((d) => CustomCard(
+                            title: d['title'],
+                            description: d['description'],
+                          ))
+                      .toList(),
                 ),
               ),
             ],
@@ -115,7 +123,16 @@ class _BillViewState extends State<BillView> {
             ],
           ),
         ),
-        if (userCards == []) ...[
+        // TODO Sandeep: 
+        // We can use two nifty syntaxes found in dart 2.3 to minimize the complexity of building a list
+        // 1.) The ... syntax flatmaps an array within an array
+        // 2.) If statements conditionally build elements into lists
+
+        // Check https://medium.com/flutter-community/whats-new-in-dart-2-3-1a7050e2408d 
+        // For a great explanation of the powers of these operators when building UI
+
+        // If there are no users, prompt to add (a bill/user/idk :) )
+        if (userAccounts == []) ...[
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
             child: Text(
@@ -137,7 +154,8 @@ class _BillViewState extends State<BillView> {
             ),
           ),
         ],
-        Expanded(child: cards),
+        //Show our content
+        Expanded(child: contentCards),
       ],
     );
   }
