@@ -1,9 +1,11 @@
 import 'package:bill_md_mobile/add_bill_view.dart';
+import 'package:bill_md_mobile/userdata.dart';
 import 'package:bill_md_mobile/bm_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:bill_md_mobile/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class BillView extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class BillView extends StatefulWidget {
 }
 
 class _BillViewState extends State<BillView> {
-  List<DocumentSnapshot> userAccounts;
+  List<BillData> userAccounts;
 
   @override
   void initState() {
@@ -29,6 +31,10 @@ class _BillViewState extends State<BillView> {
     );
   }
 
+  List<BillData> getBillData( UserData){
+    return UserData.bills;
+  }
+
   void fetchUserAccounts() {
     // We use futures here because of their readability, and simplicity in parsing errors.
     Firestore.instance
@@ -37,7 +43,7 @@ class _BillViewState extends State<BillView> {
         // On completion, update UI
         .then(
           (documents) =>
-              setState(() => this.userAccounts = documents.documents),
+              setState(() => this.userAccounts = getBillData(UserData.fromJson(documents.documents[0].data))),
         )
         //Notice we are passing the print function as the param so that it just goes straight to the console. 
         // During development, this is helpful for seeing errors. In the future, we will want to use 
@@ -50,6 +56,7 @@ class _BillViewState extends State<BillView> {
 
   @override
   Widget build(BuildContext context) {
+
     // TODO Sandeep: look how we handle the case where we are still waiting for Firestore to load vs when it finishes
     // Determine our user body now to make further down more readable for now.
     // We can put this within the body later if we wanted.
@@ -71,8 +78,8 @@ class _BillViewState extends State<BillView> {
                 child: ListView(
                   children: userAccounts
                       .map((d) => CustomCard(
-                            title: d['title'],
-                            description: d['description'],
+                            title: d.accountNum,
+                            description: d.amountDue,
                           ))
                       .toList(),
                 ),
@@ -126,6 +133,8 @@ class _BillViewState extends State<BillView> {
             ],
           ),
         ),
+        //Show our content
+        Expanded(child: contentCards),
         // TODO Sandeep: 
         // We can use two nifty syntaxes found in dart 2.3 to minimize the complexity of building a list
         // 1.) The ... syntax flatmaps an array within an array
@@ -135,7 +144,7 @@ class _BillViewState extends State<BillView> {
         // For a great explanation of the powers of these operators when building UI
 
         // If there are no users, prompt to add (a bill/user/idk :) )
-        if (userAccounts == []) ...[
+        //if (userAccounts == []) ...[
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
             child: Text(
@@ -156,9 +165,7 @@ class _BillViewState extends State<BillView> {
               ),
             ),
           ),
-        ],
-        //Show our content
-        Expanded(child: contentCards),
+        //],
       ],
     );
   }

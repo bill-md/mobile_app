@@ -2,6 +2,9 @@ import 'package:bill_md_mobile/bm_widgets.dart';
 import 'package:bill_md_mobile/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:bill_md_mobile/bill_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class AddBillView extends StatefulWidget {
   @override
@@ -13,6 +16,14 @@ class _AddBillViewState extends State<AddBillView> {
   final statementController = TextEditingController(text: '');
   final amountController = TextEditingController(text: '');
   final dueDateController = TextEditingController(text: '');
+  String docID;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getDocID();
+  }
 
   @override
   void dispose() {
@@ -25,6 +36,37 @@ class _AddBillViewState extends State<AddBillView> {
       dueDateController,
     ].forEach((c) => c.dispose());
   }
+
+  getDocID() async {
+    await Firestore.instance.collection(FirebaseCollections.user_accounts)
+    .getDocuments().then((documents) => setState(() => this.docID = documents.documents[0].documentID));
+  }
+
+
+  void tappedAddBill(_) {
+    if (accountController.text.isNotEmpty &&
+        amountController.text.isNotEmpty) {
+      var thisobj = {
+                  "accountnum": accountController.text,
+                  "statementnum": statementController.text,
+                  "amountdue": amountController.text
+                  //"statementnum": taskDescripInputController.text
+            };
+      var listobj = List<dynamic>();
+      listobj.add(thisobj);
+      Firestore.instance
+        .collection(FirebaseCollections.user_accounts)
+        .document(this.docID).updateData({"DataFields": FieldValue.arrayUnion(listobj)})
+      .then((result) => {
+ 
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => BillView(),
+      ),
+    ),
+   });
+  }}
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +137,9 @@ class _AddBillViewState extends State<AddBillView> {
               ),
             ),
             Spacer(),
-            Container(
+            GestureDetector(
+            onTapUp: tappedAddBill,
+            child: Container(
               height: 48,
               margin: EdgeInsets.all(24),
               alignment: Alignment.center,
@@ -111,7 +155,7 @@ class _AddBillViewState extends State<AddBillView> {
                   fontSize: 22,
                 ),
               ),
-            )
+            ))
           ],
         ),
       ),
